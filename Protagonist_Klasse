@@ -28,7 +28,7 @@ class Protagonist {
         //Konstruktor
         Protagonist(SVG *spielfeld) {
             this->spielfeld = spielfeld;
-            bildwert1 = 1;
+            bildwert1 = 0;
             bildwert2 = 0;
             leben = 3;
             punkte = 0;
