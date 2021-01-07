@@ -162,7 +162,7 @@ class Protagonist {
                             
         void setLeben(int plusminuseins) {
             leben = leben + plusminuseins;
-            *spielfeld.setText("Leben: " + to_string(leben) + "      Punkte: " + to_string(punkte));
+            spielfeld->setText("Leben: " + to_string(leben) + "      Punkte: " + to_string(punkte));
             if ( leben <= 0 ) {
                 gameOver();
             }
@@ -170,7 +170,7 @@ class Protagonist {
         
         void setPunkte(int punkte) {
             this->punkte = this->punkte + punkte;
-            *spielfeld.setText("Leben: " + to_string(leben) + "      Punkte: " + to_string(punkte));
+            spielfeld->setText("Leben: " + to_string(leben) + "      Punkte: " + to_string(punkte));
         }
         
         void gameOver() {
@@ -180,7 +180,7 @@ class Protagonist {
                 }
             }
             tot.show();
-            *spielfeld.setText("Game over");                            // kann man als Abbruchbedingung in die Schleife im Hauptprogramm
+            spielfeld->setText("Game over");                            // kann man als Abbruchbedingung in die Schleife im Hauptprogramm
         }                                                               // über "getText()" einbauen
 } ;
 
