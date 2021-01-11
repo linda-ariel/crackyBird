@@ -13,13 +13,19 @@ class Level{
 private:
     
     SVG view;
-    
-    int hindernisAnzahl;
-    int itemsAnzahl;
-    list <tuple <int,int> > itemsPosition;
-    list<int> hindernisPosition;
+        
     int levelMap[50][3];    
     
+    //Verwaltung von Hindernisse
+    int hindernisAnzahl;
+    list<int> hindernisPosition;
+    int blockAnzahl = 0;
+    bool max = false;
+    int leer = 0;
+    
+    //Verwaltung von Items
+    int itemsAnzahl;
+    list <tuple <int,int> > itemsPosition;
     
     //strecke
     list<Rect*> strecke;
@@ -39,7 +45,7 @@ public:
     }
     
     // getter
-    void getV() { return v; }
+    int getV() { return v; }
   
     
     // setter
@@ -51,12 +57,28 @@ public:
         
         for (int i = 0; i < 50; i++) {
             
-            for(int k = 0; k < 2 ; k++){
+            for(int k = 0; k < 3 ; k++){
                 
-                int random = rand() % 2;
-                levelMap[i][k] = random; 
-                //std::cout << levelMap[i][k] << endl;
-
+                if(max){
+                   levelMap[i][k] = 0; 
+                   leer ++;
+                   if(leer ==15){
+                       max = false;
+                       leer = 0;
+                   }
+                }else{
+                    int random = rand() % 2;
+                    levelMap[i][k] = random; 
+                    if (random == 1){
+                        
+                        blockAnzahl++;
+                        
+                        if(blockAnzahl == 2){
+                            max = true;
+                            blockAnzahl = 0; 
+                        }
+                    }
+                }
             }           
         }
     }
@@ -92,32 +114,20 @@ public:
         }      
     }
     
-    // bewegt Rect nach links
+    // bewegt alle Rects nach links und löscht, die die schon zu weit sind
     void move() {
         
         cout << "move" <<endl;
-        
+     
         //leere Liste sollte die Funktion gleich beenden
         if (strecke.empty()) {
             return;
         }
         
-        // Falls hindernis nicht mehr zusehen ist, Löschen wir es
-        int neuX = strecke.front()->getX();
+        int neuX = strecke.front()->getX();           
         
-        if (neuX < -50) {
-
-            delete (strecke.front());
-            strecke.pop_front();
-            std::cout << "deletei" << endl;
-        }
-
-        auto it = strecke.begin();
-
-        // für jede leere gehen wir 50 pixels
-        for (int j = 0; j < 10; j++) {
-
-
+          //geht durch die Liste und bewegt die Rechtsecke
+          auto it = strecke.begin();
           while (it != strecke.end()) {
             // hole ein zeiger
             Rect* block = *it;
@@ -132,25 +142,34 @@ public:
             // bewege block
             block->moveTo(neuX, y);
             AlgoViz::sleep(5);
-
-            it++;
+              
+                 // Falls hindernis nicht mehr zusehen ist, Löschen wir es
+                if (neuX <= -50) {
+                    delete (block);
+                    it = strecke.erase(it);
+                    std::cout << "deletei" << endl;
+                }else{
+                    it++;
+                }
           }
-        }
     } 
     
     void add(int h){
         
+        move();
         int r = rand() % 255;
         int g = rand() % 255;
         int b = rand() % 255;
         
         int height = rand() % 70 + 50;
-        int y = 400 - h * 100;
+        int y = 500 - height/2 - h * 220;
         
-        hindernis = new Rect(600, y, 50, 50, &view);
+        hindernis = new Rect(700, y, 70, height, &view);
         hindernis->setFill(r,g,b);
         strecke.push_back(hindernis);
+        
         cout << "add" <<endl;
+        //move();
     }
     
     
