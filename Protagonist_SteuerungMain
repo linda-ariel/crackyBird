@@ -27,7 +27,9 @@ mario.setHindernis(&hindernis);
 while ( taste != "x" ) {
     
     if ( taste == "ArrowUp" && blockade == false ) {
-        if ( supersprungB == false && mario.getY() + 140 >= mario.getHindernisY() - 40 ) { 
+        if ( mario.getBildwert() == 2 ) {
+            mario.switchBildaktiv("ArrowUp");
+        } else if ( supersprungB == false && mario.getY() + 140 >= mario.getHindernisY() - 40 ) { 
             mario.springenhoch();
             blockade = true; 
         }
