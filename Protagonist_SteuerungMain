@@ -59,7 +59,7 @@ while ( taste != "x" ) {
                 mario.setSupersprung(false);
             }
         }
-    } else if ( taste == "" && blockade == true ) {
+    } else if ( taste != "ArrowUp" && blockade == true ) {
         if ( mario.getY() + 140 >= mario.getHindernisY() - 40 && supersprungB == false && blockade2 == false ) {
             mario.springenhoch();
             if ( mario.getY() + 140 < mario.getHindernisY() - 40 && arrowUp >= 4 ) {
