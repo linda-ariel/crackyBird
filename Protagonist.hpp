@@ -22,7 +22,7 @@ class Protagonist {
         int leben;                     //sagt wie viele Leben der Protagonist "noch" hat
         int punkte;
         int x;                         //Position: x-Koordinate
-        double y;                      //Position: y-Koordinate
+        int y;                      //Position: y-Koordinate
         Hindernis *hindernis;          // Zeiger auf Hindernis, dass aktuell bei x = 300 steht
         
     public: 
@@ -142,7 +142,7 @@ class Protagonist {
             if ( bildwert1 != 1 ) {
                 switchBildaktiv("ArrowUp");                       //..zwischendurch nochmal gedrückt hat
             }
-            y = y - 0.5;                                          // Differenz, die der Protagonist weiter nach oben springt
+            y = y - 20;                                          // Differenz, die der Protagonist weiter nach oben springt
             if ( supersprungB == false ) {
                 bild[1][0].moveTo(x,y);                           // [Hindernisse sollten oben einen freien Platz von mindestens 160 lassen]
             } else {
@@ -154,7 +154,7 @@ class Protagonist {
             if ( bildwert1 != 1 ) {
                 switchBildaktiv("ArrowUP");                       // falls der Protagonist gerade von einem Hindernis runterkommt...
             }
-            y = y + 1;                                            // ...(auf dem er GELAUFEN ist)
+            y = y + 35;                                           // ...(auf dem er GELAUFEN ist)
             if ( supersprungB == false ) {
                 bild[1][0].moveTo(x,y);
             } else {
