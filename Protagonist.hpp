@@ -111,6 +111,7 @@ class Protagonist {
                 } else if ( bildwert1 == 1 ) {
                     bildwert2 = 1;
                     bild[1][0].hide();
+                    bild[1][1].moveTo(x,y);
                     bild[1][1].show();
                     bild[1][0].moveTo(x,420);
                 } else if ( bildwert1 == 2 ) {                    // von kriechen zu laufen... (Pfeiltaste hoch)
