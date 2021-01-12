@@ -10,10 +10,12 @@ using namespace std;
 
 class Level{
 
+    
 private:
     
     SVG view;
         
+    // 0 = leer   1 = hindernisse   2 = Münze   3 = Feind   4 =  Mario Block
     int levelMap[50][3];    
     
     //Verwaltung von Hindernisse
@@ -22,10 +24,6 @@ private:
     int blockAnzahl = 0;
     bool max = false;
     int leer = 0;
-    
-    //Verwaltung von Items
-    int itemsAnzahl;
-    list <tuple <int,int> > itemsPosition;
     
     //strecke
     list<Rect*> strecke;
@@ -38,9 +36,9 @@ private:
 public:
     
     //konstruktor
-    Level(int v, int itemsAnzahl, SVG &view){ 
+    Level(int v, int muenzeAnzahl, SVG &view){ 
         this -> v = v;
-        this -> itemsAnzahl = itemsAnzahl;
+        this -> muenzeAnzahl = muenzeAnzahl;
         this -> view = view;
     }
     
@@ -83,41 +81,64 @@ public:
         }
     }
 
-    //Plaziert eine beliebige Anzahl an Items in einer Random Ort,  wo noch kein Hinderniss ist
-    void plaziereItems(int anzahl){
+    //Plaziert eine beliebige Anzahl an muenze in einer Random Ort,  wo noch kein Hinderniss ist
+    void plaziereMuenze(int anzahl){
         
-        for(int i = 0; i < anzahl; i++){
-            int randomPosition = rand() % 50 + 0;
-            int randomHeight = rand() % 2 + 0 ;
-            itemsPosition.push_back(std::make_tuple (randomPosition, randomHeight));     
+       for(int i = 0; i < anzahl; i++){
+           
+            int hoehe = rand % 2 + 0 ;
             
-        }
-        int positionX;
-        int height;
-        
-        for ( auto i : itemsPosition){
-            positionX = get<0>(i);
-            height = get<1>(i);
+            int positionX = rand % 50 + 0;
             
-            if( levelMap[positionX][height] == 0 ){
-                levelMap[positionX][height] = 2;
+            while (levelMap[positionX][hoehe] != 0){
                 
-            }else{
-            
-               if(height -1 >= 0 && levelMap[positionX][height-1] == 0 ){
-                   levelMap[positionX][height-1] = 2;
-                   
-               } else{
-                   levelMap[positionX][2] = 2;
-               }
+                    positionX = rand() % 50 + 0;   
+                    hoehe = rand % 2 + 0 ;
             }
-        }      
+            
+            levelMap[positionX][hoehe] = 2;               
+        }
+        
     }
     
+    
+    //Plaziert eine beliebige Anzahl an Feinde in einer Random Ort,  wo noch kein Hinderniss ist
+    void plaziereFeind(int anzahl){
+        
+        for(int i = 0; i < anzahl; i++){
+            
+            int positionX = rand % 50 + 0;
+            
+            while (levelMap[positionX][0] != 0){
+                
+                    positionX = rand() % 50 + 0;            
+            }
+            
+            levelMap[positionX][0] = 3;               
+        }
+    }
+        
+        
+      //Plaziert eine beliebige Anzahl an Feinde in einer Random Ort,  wo noch kein Hinderniss ist
+     void plaziereMarioBlock(int anzahl){
+        
+        for(int i = 0; i < anzahl; i++){
+            
+            int positionX = rand % 50 + 0;
+            
+            while (levelMap[positionX][1] != 0){
+                
+                    positionX = rand() % 50 + 0;            
+            }
+            
+            levelMap[positionX][1] = 4;               
+        }
+     }   
+        
     // bewegt alle Rects nach links und löscht, die die schon zu weit sind
     void move() {
         
-        cout << "move" <<endl;
+        //cout << "move" <<endl;
      
         //leere Liste sollte die Funktion gleich beenden
         if (strecke.empty()) {
@@ -147,7 +168,7 @@ public:
                 if (neuX <= -50) {
                     delete (block);
                     it = strecke.erase(it);
-                    std::cout << "deletei" << endl;
+                    //std::cout << "deletei" << endl;
                 }else{
                     it++;
                 }
@@ -168,7 +189,7 @@ public:
         hindernis->setFill(r,g,b);
         strecke.push_back(hindernis);
         
-        cout << "add" <<endl;
+        //cout << "add" <<endl;
         //move();
     }
     
