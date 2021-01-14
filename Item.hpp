@@ -122,10 +122,25 @@ class Item {
                 bild.moveTo(bild.getX(), bild.getY() + 1);
             }
         }
-
+    
    
         void löschen() {
             bild.removeFromView();
+        }
+    
+        void moveItems(list<Item*> items, int v) {
+            auto it = items.begin();
+            while (it != items.end()) {
+
+                Item *item = *it;
+                //lösche item, wenn es nicht mehr zu sehen ist
+                if (item->getXpos() <= 50) {
+                item->löschen();
+                }
+                
+                item->moveTo(item->getXpos() - v, item->getYpos());
+                it++;
+            }
         }
 };
 #endif
