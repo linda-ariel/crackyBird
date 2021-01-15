@@ -1,7 +1,8 @@
 #include <algoviz/SVG.hpp>
 #include <cstdlib>
-#include <tuple>
 #include <list>
+#include <stdlib.h>     /* abs */
+
 
 using namespace std;
 
@@ -11,10 +12,10 @@ using namespace std;
 class Level {
 
 private:
-    SVG view;
+    SVG *view;
 
     // 0 = leer   1 = hindernisse   2 = Münze   3 = Feind   4 =  Mario Block
-    int levelMap[50][3];
+    int levelMap[100][3];
 
     //Verwaltung von Hindernisse
     int hindernisAnzahl;
@@ -23,7 +24,7 @@ private:
     bool max = false;
     int leer = 0;
     
-    list <Rect*> figurNah;
+    list <Rect*> bloeckeNah;
 
     //Anzahl von Items
     int marioBlockAnzahl;
@@ -39,7 +40,7 @@ private:
 
 public:
     //konstruktor
-    Level(int v, int muenzeAnzahl, int feindAnzahl, int marioBlockAnzahl, SVG& view){
+    Level(int v, int muenzeAnzahl, int feindAnzahl, int marioBlockAnzahl, SVG *view){
         
         this->v = v;
         this->muenzeAnzahl = muenzeAnzahl;
@@ -63,7 +64,7 @@ public:
     void fuellMap(){
 
         //Iterator für die länge
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             
             //Iterator für die Höhe
             for (int h = 0; h < 3; h++) {
@@ -74,7 +75,7 @@ public:
                     levelMap[i][h] = 0;
                     leer++;
                     
-                    if (leer == 30) {
+                    if (leer == 47) {
                         max = false;
                         leer = 0;
                     }
@@ -104,11 +105,11 @@ public:
         for (int i = 0; i < anzahl; i++) {
 
             int hoehe = rand() % 2 + 0;
-            int positionX = rand() % 50 + 0;
+            int positionX = rand() % 100 + 0;
 
             while (levelMap[positionX][hoehe] != 0) {
 
-                positionX = rand() % 50 + 0;
+                positionX = rand() % 100 + 0;
                 hoehe = rand() % 2 + 0;
             }
 
@@ -121,11 +122,11 @@ public:
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 50 + 0;
+            int positionX = rand() % 100 + 0;
 
             while (levelMap[positionX][0] != 0) {
 
-                positionX = rand() % 50 + 0;
+                positionX = rand() % 100 + 0;
             }
 
             levelMap[positionX][0] = 3;
@@ -137,11 +138,11 @@ public:
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 50 + 0;
+            int positionX = rand() % 100 + 0;
 
             while (levelMap[positionX][1] != 0) {
 
-                positionX = rand() % 50 + 0;
+                positionX = rand() % 100 + 0;
             }
 
             levelMap[positionX][1] = 4;
@@ -193,33 +194,75 @@ public:
     }
     
     
-    
+    //Speichert blöcke die Nah an der Spieler sind in einer separate Liste
     void toList(int x, Rect* block){
         
-        if( x >= 80 && x <= 220 && find(figurNah.begin(), figurNah.end(), block) == figurNah.end() ){
+        if( x >= 80 && x <= 220 && find(bloeckeNah.begin(), bloeckeNah.end(), block) == bloeckeNah.end() ){
                 
-                figurNah.push_back(block);
-                cout <<"push: " << figurNah.size() << endl ;
+                bloeckeNah.push_back(block);
+                cout <<"push: " << bloeckeNah.size() << endl ;
                 
-            }
+        }
             
-            if(x < 80 ){
-                
-                if(find(figurNah.begin(), figurNah.end(), block) != figurNah.end()){
-                    
-                    figurNah.remove(block);
-                    cout <<"erase: " << figurNah.size()<< endl ;
-                }
+        if(x < 80 ){
+
+            if(find(bloeckeNah.begin(), bloeckeNah.end(), block) != bloeckeNah.end()){
+
+                bloeckeNah.remove(block);
+                cout <<"erase: " << bloeckeNah.size()<< endl ;
             }
+        }
     }
+    
+    //geht die Liste durch und überprüft für kollisionen 
+    bool kollidiert ( int spielerX, int spielerY ){
+         
+       for (Rect* block : bloeckeNah){
+           
+           int blockY = block->getY();
+           int blockX = block-> getX();
+           int hoehe = block -> getHeight();
+           int breite = block -> getWidth();
+           
+           int abstandX = abs(spielerX-blockX);
+           int abstandY = abs(spielerY-blockY);
+           
+           if(BlockY < spielerY){
+               
+               int grenzeY = hoehe;
+                   
+           }else{
+               
+               int grenzeY = 80;
+           } 
+           
+           if(BlockX < spielerX){
+               
+               int grenzeX = breite;
+                   
+           }else{
+               
+               int grenzeX = 80;
+           }
+           
+           if(abstandX <= grenzeX &&  abstandY <= grenzeY){
+               
+               return true;
+               
+           }
+           
+       }
+        
+       return false;    
+    }           
+               
+               
+           
+    
 
     //füngt ein Hindernis zu
     void add(int h){
 
-        for (int i = 0; i < 7; i++){
-            
-            move();
-        }    
         int r = rand() % 255;
         int g = rand() % 255;
         int b = rand() % 255;
@@ -227,7 +270,7 @@ public:
         int height = rand() % 70 + 50;
         int y = 500 - height / 2 - h * 220;
 
-        hindernis = new Rect(700, y, 70, height, &view);
+        hindernis = new Rect(700, y, 70, height, &*view);
         hindernis->setFill(r, g, b);
         strecke.push_back(hindernis);
         
@@ -235,6 +278,7 @@ public:
 
     //schaut was auf die Karte ist
     int getValue(int x, int y){
+        
         return levelMap[x][y];
     }
 };
