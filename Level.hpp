@@ -15,7 +15,7 @@ private:
     SVG *view;
 
     // 0 = leer   1 = hindernisse   2 = Münze   3 = Feind   4 =  Mario Block
-    int levelMap[100][3];
+    int levelMap[50][3];
 
     //Verwaltung von Hindernisse
     int hindernisAnzahl;
@@ -64,7 +64,7 @@ public:
     void fuellMap(){
 
         //Iterator für die länge
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             
             //Iterator für die Höhe
             for (int h = 0; h < 3; h++) {
@@ -75,7 +75,7 @@ public:
                     levelMap[i][h] = 0;
                     leer++;
                     
-                    if (leer == 47) {
+                    if (leer == 60) {
                         max = false;
                         leer = 0;
                     }
@@ -105,11 +105,11 @@ public:
         for (int i = 0; i < anzahl; i++) {
 
             int hoehe = rand() % 2 + 0;
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 50 + 0;
 
             while (levelMap[positionX][hoehe] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() % 50 + 0;
                 hoehe = rand() % 2 + 0;
             }
 
@@ -117,32 +117,32 @@ public:
         }
     }
 
-    //Plaziert eine beliebige Anzahl an Feinde in einer rand()om Ort,  wo noch kein Hinderniss ist
+    //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
     void plaziereFeind(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 50 + 0;
 
             while (levelMap[positionX][0] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() % 50 + 0;
             }
 
             levelMap[positionX][0] = 3;
         }
     }
 
-    //Plaziert eine beliebige Anzahl an Feinde in einer rand()om Ort,  wo noch kein Hinderniss ist
+    //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
     void plaziereMarioBlock(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 50 + 0;
 
             while (levelMap[positionX][1] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() % 50 + 0;
             }
 
             levelMap[positionX][1] = 4;
@@ -215,7 +215,7 @@ public:
     }
     
     //geht die Liste durch und überprüft für kollisionen 
-    bool kollidiert ( int spielerX, int spielerY ){
+    bool kollidiert (int spielerY ){
          
        for (Rect* block : bloeckeNah){
            
@@ -224,25 +224,28 @@ public:
            int hoehe = block -> getHeight();
            int breite = block -> getWidth();
            
-           int abstandX = abs(spielerX-blockX);
+           int abstandX = abs(150-blockX);
            int abstandY = abs(spielerY-blockY);
            
-           if(BlockY < spielerY){
+           int grenzeY;
+           int grenzeX;
+
+           if(blockY < spielerY){
                
-               int grenzeY = hoehe;
+               grenzeY = hoehe;
                    
            }else{
                
-               int grenzeY = 80;
+               grenzeY = 80;
            } 
            
-           if(BlockX < spielerX){
+           if(blockX < 150){
                
-               int grenzeX = breite;
+               grenzeX = breite;
                    
            }else{
                
-               int grenzeX = 80;
+               grenzeX = 80;
            }
            
            if(abstandX <= grenzeX &&  abstandY <= grenzeY){
@@ -254,15 +257,33 @@ public:
        }
         
        return false;    
-    }           
-               
-               
-           
+    }   
     
+    
+    int unterY (int spielerY ){
+        
+        int groessteY = 0;
+        
+        for (Rect* block : bloeckeNah){
+            
+            int blockY = block->getY();
+            
+            if(blockY < spielerY && blockY > groessteY){
+                
+                groessteY = blockY;
+            
+            }
+        }
+        
+    return groessteY;  
+        
+    }
+    
+               
 
     //füngt ein Hindernis zu
     void add(int h){
-
+        move();
         int r = rand() % 255;
         int g = rand() % 255;
         int b = rand() % 255;
