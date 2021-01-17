@@ -15,7 +15,7 @@ private:
     SVG *view;
 
     // 0 = leer   1 = hindernisse   2 = Münze   3 = Feind   4 =  Mario Block
-    int levelMap[50][3];
+    int levelMap[100][3];
 
     //Verwaltung von Hindernisse
     int hindernisAnzahl;
@@ -64,7 +64,7 @@ public:
     void fuellMap(){
 
         //Iterator für die länge
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             
             //Iterator für die Höhe
             for (int h = 0; h < 3; h++) {
@@ -75,7 +75,7 @@ public:
                     levelMap[i][h] = 0;
                     leer++;
                     
-                    if (leer == 60) {
+                    if (leer == 51) {
                         max = false;
                         leer = 0;
                     }
@@ -88,12 +88,15 @@ public:
                     if (random == 1) {
 
                         blockAnzahl++;
-
-                        if (blockAnzahl == 2) {
-                            max = true;
-                            blockAnzahl = 0;
-                        }
                     }
+                    
+                    if (blockAnzahl == 2) {
+                        
+                        max = true;
+                        blockAnzahl = 0;
+                        
+                    }
+
                 }
             }
         }
@@ -105,11 +108,11 @@ public:
         for (int i = 0; i < anzahl; i++) {
 
             int hoehe = rand() % 2 + 0;
-            int positionX = rand() % 50 + 0;
+            int positionX = rand() % 100 + 0;
 
             while (levelMap[positionX][hoehe] != 0) {
 
-                positionX = rand() % 50 + 0;
+                positionX = rand() % 100 + 0;
                 hoehe = rand() % 2 + 0;
             }
 
@@ -122,11 +125,11 @@ public:
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 50 + 0;
+            int positionX = rand() % 100 + 0;
 
             while (levelMap[positionX][0] != 0) {
 
-                positionX = rand() % 50 + 0;
+                positionX = rand() % 100 + 0;
             }
 
             levelMap[positionX][0] = 3;
@@ -138,15 +141,26 @@ public:
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 50 + 0;
+            int positionX = rand() % 100 + 0;
 
             while (levelMap[positionX][1] != 0) {
 
-                positionX = rand() % 50 + 0;
+                positionX = rand() % 100 + 0;
             }
 
             levelMap[positionX][1] = 4;
         }
+    }
+    
+    
+    void print(){
+        for (int i = 0; i < 100; i++ ){
+            
+            for (int j = 0; j < 100; j++ ){
+                
+                cout << levelMap[i][j];
+            }   
+        }   
     }
 
     // bewegt alle Rects nach links und löscht, die die schon zu weit sind
@@ -260,7 +274,7 @@ public:
     }   
     
     
-    int unterY (int spielerY ){
+    int woIstBoden (int spielerY ){
         
         int groessteY = 0;
         
@@ -283,7 +297,9 @@ public:
 
     //füngt ein Hindernis zu
     void add(int h){
+        for(int i = 0; i < 14 ; i++){
         move();
+        }
         int r = rand() % 255;
         int g = rand() % 255;
         int b = rand() % 255;
