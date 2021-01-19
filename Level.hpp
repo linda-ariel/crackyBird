@@ -51,11 +51,8 @@ public:
         //this->marioBlockAnzahl = marioBlockAnzahl;
         this->view = view;
         
-        fuellMap();
-        platziereMuenze(muenzeAnzahl);
-        platziereFeind(feindAnzahl);
-       // platziereMarioBlock(marioBlockAnzahl);
-        toQueue();
+        
+        buildLevel(muenzeAnzahl, feindAnzahl);
     }
 
     // getter
@@ -74,7 +71,6 @@ public:
             
             //Iterator für die Höhe
             for (int h = 0; h < 3; h++) {
-
             
                 int random = rand() % 2;
                 levelMap[i][h] = random;
@@ -164,6 +160,18 @@ public:
             levelMap[positionX][1] = 4;
         }
     }
+    
+    
+    void buildLevel(int muenze, int feinde){
+        
+        fuellMap();
+        platziereMuenze(muenze);
+        platziereFeind(feinde);
+        platziereMarioBlock(marioBlockAnzahl);
+        toQueue();
+    }
+        
+    
 
     // bewegt alle Rects nach links und löscht, die die schon zu weit sind
     void move(){
