@@ -23,6 +23,10 @@ private:
     int hindernisAnzahl;
     list<int> hindernisPosition;
     
+    int levelMap[30][3];
+    int blockAnzahl = 0;
+    bool max = false;
+    int leer = 0;
     list <Rect*> bloeckeNah;
 
     //Anzahl von Items
@@ -48,9 +52,10 @@ public:
         this->view = view;
         
         fuellMap();
-       // plaziereMuenze(muenzeAnzahl);
-        //plaziereFeind(feindAnzahl);
-        //plaziereMarioBlock(marioBlockAnzahl);
+        platziereMuenze(muenzeAnzahl);
+        platziereFeind(feindAnzahl);
+       // platziereMarioBlock(marioBlockAnzahl);
+        toQueue();
     }
 
     // getter
@@ -59,36 +64,65 @@ public:
     // setter
     void setV(double v) { this->v = v; }
 
-    //Plaziert die Hindernisse
+    
+    
+        //Plaziert die Hindernisse
     void fuellMap(){
+
+        //Iterator für die länge
+        for (int i = 0; i < 30; i++) {
+            
+            //Iterator für die Höhe
+            for (int h = 0; h < 3; h++) {
+
+            
+                int random = rand() % 2;
+                levelMap[i][h] = random;
+            }
+        }
+    }
+    
+    
+    
+    //Plaziert die Hindernisse
+    void toQueue(){
+        
         
         srand (time(nullptr));
         
         for ( int i = 0; i < 30; i++ ) {
-            int random1 = rand() % 2;
-            ebene2.enqueue(random1);
-            int random2 = rand() % 2;
-            ebene3.enqueue(random2);
-            int random3 = rand() % 2;
-            if ( random1 == 1 && random2 == 1 ) {
+            
+            
+            int pos2 = levelMap[i][1];
+            ebene2.enqueue(pos2);
+            
+            int pos3 = levelMap[i][2];
+            ebene3.enqueue(pos3);
+            
+           
+            if ( pos2 == 1 && pos3 == 1 ) {
+                
                 ebene1.enqueue(0);
+                
             } else {
-                ebene1.enqueue(random3);
+                
+                int pos1 = levelMap[i][0];
+                ebene1.enqueue(pos1);
             }
         }
     }
 
     //Plaziert eine beliebige Anzahl an muenze in einer rand()om Ort,  wo noch kein Hinderniss ist
-  /*  void plaziereMuenze(int anzahl){
+  void platziereMuenze(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
             int hoehe = rand() % 2 + 0;
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 30 + 0;
 
             while (levelMap[positionX][hoehe] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() % 30;
                 hoehe = rand() % 2 + 0;
             }
 
@@ -97,15 +131,15 @@ public:
     }
 
     //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
-    void plaziereFeind(int anzahl){
+    void platziereFeind(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 30;
 
             while (levelMap[positionX][0] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() %30;
             }
 
             levelMap[positionX][0] = 3;
@@ -113,20 +147,20 @@ public:
     }
 
     //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
-    void plaziereMarioBlock(int anzahl){
+    void platziereMarioBlock(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 30;
 
             while (levelMap[positionX][1] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() % 30;
             }
 
             levelMap[positionX][1] = 4;
         }
-    }*/
+    }
 
     // bewegt alle Rects nach links und löscht, die die schon zu weit sind
     void move(){
@@ -280,8 +314,9 @@ public:
 
         int height = rand() % 70 + 50;
         int y = 500 - height / 2 - h * 150;
+        int x = 700 + ( rand() % ( 800 - 700 + 1 ) );
 
-        hindernis = new Rect(700, y, 100, height, &*view);
+        hindernis = new Rect(x, y, 100, height, &*view);
         hindernis->setFill(r, g, b);
         strecke.push_back(hindernis);
         
