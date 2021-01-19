@@ -2,12 +2,12 @@
 #include <cstdlib>
 #include <list>
 #include <stdlib.h>     /* abs */
-
+#include "Queue.hpp"
 
 using namespace std;
 
-#ifndef _LEVEL_
-#define _LEVEL_
+#ifndef _LEVEL2_
+#define _LEVEL2_
 
 class Level {
 
@@ -15,15 +15,18 @@ private:
     SVG *view;
 
     // 0 = leer   1 = hindernisse   2 = Münze   3 = Feind   4 =  Mario Block
-    int levelMap[100][3];
+    Queue<int> ebene1;
+    Queue<int> ebene2;
+    Queue<int> ebene3;
 
     //Verwaltung von Hindernisse
     int hindernisAnzahl;
     list<int> hindernisPosition;
+    
+    int levelMap[30][3];
     int blockAnzahl = 0;
     bool max = false;
     int leer = 0;
-    
     list <Rect*> bloeckeNah;
 
     //Anzahl von Items
@@ -40,18 +43,19 @@ private:
 
 public:
     //konstruktor
-    Level(int v, int muenzeAnzahl, int feindAnzahl, int marioBlockAnzahl, SVG *view){
+    Level(int v, int muenzeAnzahl, int feindAnzahl, SVG *view){
         
         this->v = v;
         this->muenzeAnzahl = muenzeAnzahl;
         this->feindAnzahl = feindAnzahl;
-        this->marioBlockAnzahl = marioBlockAnzahl;
+        //this->marioBlockAnzahl = marioBlockAnzahl;
         this->view = view;
         
         fuellMap();
-        plaziereMuenze(muenzeAnzahl);
-        plaziereFeind(feindAnzahl);
-        plaziereMarioBlock(marioBlockAnzahl);
+        platziereMuenze(muenzeAnzahl);
+        platziereFeind(feindAnzahl);
+       // platziereMarioBlock(marioBlockAnzahl);
+        toQueue();
     }
 
     // getter
@@ -60,59 +64,68 @@ public:
     // setter
     void setV(double v) { this->v = v; }
 
-    //Plaziert die Hindernisse
+    
+    
+        //Plaziert die Hindernisse
     void fuellMap(){
 
         //Iterator für die länge
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 30; i++) {
             
             //Iterator für die Höhe
             for (int h = 0; h < 3; h++) {
 
-                //falls 2 Blöcke schon nebeneinander sind, setzen wir 15 mal nichts auf
-                if (max) {
-                    
-                    levelMap[i][h] = 0;
-                    leer++;
-                    
-                    if (leer == 51) {
-                        max = false;
-                        leer = 0;
-                    }
-                //Sonst plazieren wir zufällig blöcke oder Leere    
-                }else {
-                    int random = rand() % 2;
-                    levelMap[i][h] = random;
-                    
-                    //wir zählen die Blöcke
-                    if (random == 1) {
-
-                        blockAnzahl++;
-                    }
-                    
-                    if (blockAnzahl == 2) {
-                        
-                        max = true;
-                        blockAnzahl = 0;
-                        
-                    }
-
-                }
+            
+                int random = rand() % 2;
+                levelMap[i][h] = random;
             }
+        }
+    }
+    
+    
+    
+    //Plaziert die Hindernisse
+    void toQueue(){
+        
+        
+        srand (time(nullptr));
+        
+        for ( int i = 0; i < 30; i++ ) {
+            
+            
+            int pos2 = levelMap[i][1];
+            ebene2.enqueue(pos2);
+            
+            int pos3 = levelMap[i][2];
+            ebene3.enqueue(pos3);
+            
+           int pos1;
+            if ( pos2 == 1 && pos3 == 1 ) {
+                
+                pos1 = 0;
+                ebene1.enqueue(pos1);
+                
+            } else {
+                
+                pos1 = levelMap[i][0];
+                ebene1.enqueue(pos1);
+            }
+            
+            cout << pos1 << " , " << pos2 << " , " << pos3 << endl; 
         }
     }
 
     //Plaziert eine beliebige Anzahl an muenze in einer rand()om Ort,  wo noch kein Hinderniss ist
-    void plaziereMuenze(int anzahl){
+  void platziereMuenze(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
             int hoehe = rand() % 2 + 0;
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 30 + 0;
 
             while (levelMap[positionX][hoehe] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() % 30;
                 hoehe = rand() % 2 + 0;
             }
 
@@ -121,15 +134,15 @@ public:
     }
 
     //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
-    void plaziereFeind(int anzahl){
+    void platziereFeind(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 30;
 
             while (levelMap[positionX][0] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() %30;
             }
 
             levelMap[positionX][0] = 3;
@@ -137,30 +150,19 @@ public:
     }
 
     //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
-    void plaziereMarioBlock(int anzahl){
+    void platziereMarioBlock(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
 
-            int positionX = rand() % 100 + 0;
+            int positionX = rand() % 30;
 
             while (levelMap[positionX][1] != 0) {
 
-                positionX = rand() % 100 + 0;
+                positionX = rand() % 30;
             }
 
             levelMap[positionX][1] = 4;
         }
-    }
-    
-    
-    void print(){
-        for (int i = 0; i < 100; i++ ){
-            
-            for (int j = 0; j < 100; j++ ){
-                
-                cout << levelMap[i][j];
-            }   
-        }   
     }
 
     // bewegt alle Rects nach links und löscht, die die schon zu weit sind
@@ -211,14 +213,14 @@ public:
     //Speichert blöcke die Nah an der Spieler sind in einer separate Liste
     void toList(int x, Rect* block){
         
-        if( x >= 80 && x <= 220 && find(bloeckeNah.begin(), bloeckeNah.end(), block) == bloeckeNah.end() ){
+        if( x >= 10 && x <= 190 && find(bloeckeNah.begin(), bloeckeNah.end(), block) == bloeckeNah.end() ){
                 
                 bloeckeNah.push_back(block);
                 cout <<"push: " << bloeckeNah.size() << endl ;
                 
         }
             
-        if(x < 80 ){
+        if(x < 10 ){
 
             if(find(bloeckeNah.begin(), bloeckeNah.end(), block) != bloeckeNah.end()){
 
@@ -229,7 +231,7 @@ public:
     }
     
     //geht die Liste durch und überprüft für kollisionen 
-    bool kollidiert (int spielerY ){
+   int kollidiert (int spielerY, int bildwert){
          
        for (Rect* block : bloeckeNah){
            
@@ -238,45 +240,73 @@ public:
            int hoehe = block -> getHeight();
            int breite = block -> getWidth();
            
-           int abstandX = abs(150-blockX);
-           int abstandY = abs(spielerY-blockY);
+           int abstandX = abs(150-blockX);                //Abstand x-Koordinate Spieler und X-Koordinate Block
+           int abstandY = abs(spielerY-blockY);           //Abstand y-Koordinate Spieler und Y-Koordinate Block
            
            int grenzeY;
            int grenzeX;
 
-           if(blockY < spielerY){
+           if ( bildwert != 2 ) {
                
-               grenzeY = hoehe;
+               if ( blockY < spielerY ) {
                    
-           }else{
-               
-               grenzeY = 80;
-           } 
-           
-           if(blockX < 150){
-               
-               grenzeX = breite;
+                   grenzeY = hoehe + 40;
+                  
+               } else {
                    
-           }else{
+                   grenzeY = 40;
+                   
+               }
                
-               grenzeX = 80;
+               if ( blockX < 150 ) {
+                   
+                   grenzeX = breite + 40;
+                  
+               } else {
+                   
+                   grenzeX = 40;
+                   
+               }
+               
+           } else {
+            
+               if ( blockY < spielerY ) {
+                   
+                   grenzeY = hoehe + 25;
+                  
+               } else {
+                   
+                   grenzeY = 25;
+                   
+               }
+               
+               if ( blockX < 150 ) {
+                   
+                   grenzeX = breite + 25;
+                  
+               } else {
+                   
+                   grenzeX = 25;
+                   
+               }
+             
            }
-           
-           if(abstandX <= grenzeX &&  abstandY <= grenzeY){
+
+           if (abstandX <= grenzeX && abstandY <= grenzeY) {
                
-               return true;
+               return blockY;
                
            }
            
        }
         
-       return false;    
-    }   
+       return 600;    
+    } 
     
     
     int woIstBoden (int spielerY ){
         
-        int groessteY = 0;
+        int groessteY = 465;
         
         for (Rect* block : bloeckeNah){
             
@@ -293,31 +323,41 @@ public:
         
     }
     
+    int getEbene1() {
+        return ebene1.dequeue();
+    }
+    
+    int getEbene2() {
+        return ebene2.dequeue();
+    }
+    
+    int getEbene3() {
+        return ebene3.dequeue();
+    }
                
 
     //füngt ein Hindernis zu
     void add(int h){
-        for(int i = 0; i < 14 ; i++){
-        move();
-        }
+
         int r = rand() % 255;
         int g = rand() % 255;
         int b = rand() % 255;
 
         int height = rand() % 70 + 50;
-        int y = 500 - height / 2 - h * 220;
+        int y = 500 - height / 2 - h * 150;
+        int x = 700 + ( rand() % ( 800 - 700 + 1 ) );
 
-        hindernis = new Rect(700, y, 70, height, &*view);
+        hindernis = new Rect(x, y, 100, height, &*view);
         hindernis->setFill(r, g, b);
         strecke.push_back(hindernis);
         
         }
 
     //schaut was auf die Karte ist
-    int getValue(int x, int y){
+    /*int getValue(int x, int y){
         
         return levelMap[x][y];
-    }
+    }*/
 };
 
 #endif

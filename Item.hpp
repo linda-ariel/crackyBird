@@ -16,8 +16,8 @@ class Item {
         int breite;
         Image bild;
         SVG *spielfeld;
-        
-
+        Item* item;
+      
     public:  
     
         //Standartonstruktor
@@ -40,6 +40,7 @@ class Item {
             } else if (art == 2) {
                 //feind
                 bild = Image("../img/Dungeon/Held.png",xpos, ypos, hoehe, breite, spielfeld);
+
             }
         }
     
@@ -70,7 +71,6 @@ class Item {
     
     
         //setter
-
         void setXpos(int xpos) {
             this->xpos = xpos;
             bild.moveTo(xpos, bild.getY());
@@ -95,10 +95,9 @@ class Item {
         }
         
     
-        //operationen
+        //Operationen für Kollision
     
-        //Münze
-    
+        //Münze    
         void muenzeGesammelt() { 
             //Münze wird immer kleiner
             for(int size = 30; size > 5; size-- ) {
@@ -107,7 +106,7 @@ class Item {
             bild.removeFromView();
         }
 
-    
+        //Marioblock
         void steinZerstoert() {
             for (int zaehler = 0; zaehler < 50; zaehler++ ) {
                 bild.moveTo(bild.getX(), bild.getY() -1 );
@@ -123,24 +122,10 @@ class Item {
             }
         }
     
-   
+        //entfernt Item von SVG
         void löschen() {
             bild.removeFromView();
         }
     
-        void moveItems(list<Item*> items, int v) {
-            auto it = items.begin();
-            while (it != items.end()) {
-
-                Item *item = *it;
-                //lösche item, wenn es nicht mehr zu sehen ist
-                if (item->getXpos() <= 50) {
-                item->löschen();
-                }
-                
-                item->moveTo(item->getXpos() - v, item->getYpos());
-                it++;
-            }
-        }
 };
 #endif
