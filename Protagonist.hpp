@@ -5,8 +5,8 @@
 using namespace std;
 
 
-#ifndef _PROTAGONISTALT_
-#define _PROTAGONISTALT_
+#ifndef _PROTAGONIST_
+#define _PROTAGONIST_
 
 class Protagonist {
     
