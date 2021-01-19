@@ -79,8 +79,7 @@ class Protagonist {
           //wann sich der Protagonist wieder aufstellt (Pfeiltaste nach oben), um einem Hindernis (von oben) auszuweichen -> unterdessen 
           //kriecht der Protagonist jedoch die ganze Zeit (passiv)
     
-        void switchBildpassiv() {                                  // passiv: abwechselndes Laufen ; nach Sprung wieder beginnen zu laufen ;
-            if ( blinken == false ) {
+        void switchBildpassiv() {                                  // passiv: abwechselndes Laufen ; nach Sprung wieder beginnen zu laufen 
                 if ( bildwert1 == 0 && bildwert2 == 0 ) {             // abwechselndes Kriechen
                     bildwert2 = 1;                                  // -> passiver Bildwechsel muss in jedem Schleifendurchlauf stattfinden
                     bild[0][0].hide();
@@ -113,7 +112,7 @@ class Protagonist {
                     bild[2][0].moveTo(x,y);
                 }
                 blitz.hide();
-            } else {
+            if ( blinken == true ) {
                 if ( gezeigt == true ) {
                     bild[bildwert1][bildwert2].hide();
                     gezeigt = false;
