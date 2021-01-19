@@ -1,6 +1,5 @@
 #include <iostream>
 #include <algoviz/SVG.hpp>
-#include "Hindernis.hpp"
 
 using namespace std;
 
