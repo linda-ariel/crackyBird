@@ -314,13 +314,13 @@ public:
     
     int woIstBoden (int spielerY ){
         
-        int groessteY = 465;
+        int groessteY = 490;
         
         for (Rect* block : bloeckeNah){
             
             int blockY = block->getY();
             
-            if(blockY < spielerY && blockY > groessteY){
+            if(blockY > spielerY + 45 && blockY < groessteY){
                 
                 groessteY = blockY;
             
