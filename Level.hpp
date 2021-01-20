@@ -40,19 +40,21 @@ private:
 
     // geschwindigkeit
     double v;
-
+    
+    list <int> itemsX;
+ 
 public:
     //konstruktor
-    Level(int v, int muenzeAnzahl, int feindAnzahl, SVG *view){
+    Level(int v, int muenzeAnzahl, int feindAnzahl,int marioBlockAnzahl, SVG *view){
         
         this->v = v;
         this->muenzeAnzahl = muenzeAnzahl;
         this->feindAnzahl = feindAnzahl;
-        //this->marioBlockAnzahl = marioBlockAnzahl;
+        this->marioBlockAnzahl = marioBlockAnzahl;
         this->view = view;
         
         
-        buildLevel(muenzeAnzahl, feindAnzahl);
+        buildLevel(muenzeAnzahl, feindAnzahl, marioBlockAnzahl);
     }
 
     // getter
@@ -63,7 +65,7 @@ public:
 
     
     
-        //Plaziert die Hindernisse
+    //Plaziert die Hindernisse
     void fuellMap(){
 
         //Iterator für die länge
@@ -80,7 +82,7 @@ public:
     
     
     
-    //Plaziert die Hindernisse
+    //matrix wird in Queues umgewandelt
     void toQueue(){
         
         
@@ -111,34 +113,35 @@ public:
         }
     }
 
-    //Plaziert eine beliebige Anzahl an muenze in einer rand()om Ort,  wo noch kein Hinderniss ist
+   //Plaziert eine beliebige Anzahl an muenze in einer random Ort,  wo noch kein Hinderniss ist
   void platziereMuenze(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
+            
+            int hoehe = rand() % 3;
+            int positionX = rand() % 30;
 
-            int hoehe = rand() % 2 + 0;
-            int positionX = rand() % 30 + 0;
-
-            while (levelMap[positionX][hoehe] != 0) {
+            while(levelMap[positionX][hoehe] != 0 || levelMap[positionX][0] > 1 ||levelMap[positionX][1] > 1 || levelMap[positionX][2] > 1){
 
                 positionX = rand() % 30;
-                hoehe = rand() % 2 + 0;
+                int hoehe = rand() % 3;
             }
 
             levelMap[positionX][hoehe] = 2;
         }
-    }
+            
+  }
 
     //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
     void platziereFeind(int anzahl){
+       
+       for (int i = 0; i < anzahl; i++) {
 
-        for (int i = 0; i < anzahl; i++) {
-
-            int positionX = rand() % 30;
+            int positionX = rand() % 30 + 0;
 
             while (levelMap[positionX][0] != 0) {
 
-                positionX = rand() %30;
+                positionX = rand() % 30 + 0;
             }
 
             levelMap[positionX][0] = 3;
@@ -147,27 +150,30 @@ public:
 
     //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
     void platziereMarioBlock(int anzahl){
-
-        for (int i = 0; i < anzahl; i++) {
-
+            
+     for (int i = 0; i < anzahl; i++) {
+            
             int positionX = rand() % 30;
 
-            while (levelMap[positionX][1] != 0) {
+            while (levelMap[positionX][1] != 0 || levelMap[positionX][0] > 1 || levelMap[positionX][2] > 1  ) {
 
                 positionX = rand() % 30;
+                
             }
 
             levelMap[positionX][1] = 4;
-        }
-    }
+        } 
+        
+  }
     
     
-    void buildLevel(int muenze, int feinde){
+    
+    void buildLevel(int muenze, int feinde, int marioBlock){
         
         fuellMap();
-        platziereMuenze(muenze);
         platziereFeind(feinde);
-        platziereMarioBlock(marioBlockAnzahl);
+        platziereMuenze(muenze);
+        platziereMarioBlock(marioBlock);
         toQueue();
     }
         
