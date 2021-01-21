@@ -6,8 +6,8 @@
 
 using namespace std;
 
-#ifndef _LEVEL2_
-#define _LEVEL2_
+#ifndef _LEVEL_
+#define _LEVEL_
 
 class Level {
 
@@ -23,14 +23,15 @@ private:
     int hindernisAnzahl;
     list<int> hindernisPosition;
     
-    int levelMap[30][3];
-    int blockAnzahl = 0;
-    bool max = false;
-    int leer = 0;
+    
+    //Karte für das level
+    int karte[30][3];
+    
+    //alle Hindernisse nah an Protagonist
     list <Rect*> bloeckeNah;
 
     //Anzahl von Items
-    int marioBlockAnzahl;
+    int stein;
     int muenzeAnzahl;
     int feindAnzahl;
 
@@ -41,20 +42,20 @@ private:
     // geschwindigkeit
     double v;
     
-    list <int> itemsX;
  
 public:
+    
     //konstruktor
-    Level(int v, int muenzeAnzahl, int feindAnzahl,int marioBlockAnzahl, SVG *view){
+    Level(int v, int muenzeAnzahl, int feindAnzahl,int stein, SVG *view){
         
         this->v = v;
         this->muenzeAnzahl = muenzeAnzahl;
         this->feindAnzahl = feindAnzahl;
-        this->marioBlockAnzahl = marioBlockAnzahl;
+        this->stein = stein;
         this->view = view;
         
         
-        buildLevel(muenzeAnzahl, feindAnzahl, marioBlockAnzahl);
+        buildLevel(muenzeAnzahl, feindAnzahl, stein);
     }
 
     // getter
@@ -75,7 +76,7 @@ public:
             for (int h = 0; h < 3; h++) {
             
                 int random = rand() % 2;
-                levelMap[i][h] = random;
+                karte[i][h] = random;
             }
         }
     }
@@ -91,10 +92,10 @@ public:
         for ( int i = 0; i < 30; i++ ) {
             
             
-            int pos2 = levelMap[i][1];
+            int pos2 = karte[i][1];
             ebene2.enqueue(pos2);
             
-            int pos3 = levelMap[i][2];
+            int pos3 = karte[i][2];
             ebene3.enqueue(pos3);
             
            int pos1;
@@ -105,7 +106,7 @@ public:
                 
             } else {
                 
-                pos1 = levelMap[i][0];
+                pos1 = karte[i][0];
                 ebene1.enqueue(pos1);
             }
             
@@ -113,7 +114,7 @@ public:
         }
     }
 
-   //Plaziert eine beliebige Anzahl an muenze in einer random Ort,  wo noch kein Hinderniss ist
+   //Plaziert eine beliebige Anzahl an muenze in einer random Ort,  wo noch kein Hindernisse sind + keine Items im selben Position X 
   void platziereMuenze(int anzahl){
 
         for (int i = 0; i < anzahl; i++) {
@@ -121,13 +122,13 @@ public:
             int hoehe = rand() % 3;
             int positionX = rand() % 30;
 
-            while(levelMap[positionX][hoehe] != 0 || levelMap[positionX][0] > 1 ||levelMap[positionX][1] > 1 || levelMap[positionX][2] > 1){
+            while(karte[positionX][hoehe] != 0 || karte[positionX][0] > 1 ||karte[positionX][1] > 1 || karte[positionX][2] > 1){
 
                 positionX = rand() % 30;
                 int hoehe = rand() % 3;
             }
 
-            levelMap[positionX][hoehe] = 2;
+            karte[positionX][hoehe] = 2;
         }
             
   }
@@ -139,41 +140,42 @@ public:
 
             int positionX = rand() % 30 + 0;
 
-            while (levelMap[positionX][0] != 0) {
+            while (karte[positionX][0] != 0) {
 
                 positionX = rand() % 30 + 0;
             }
 
-            levelMap[positionX][0] = 3;
+            karte[positionX][0] = 3;
         }
     }
 
-    //Plaziert eine beliebige Anzahl an Feinde in einer random Ort,  wo noch kein Hinderniss ist
-    void platziereMarioBlock(int anzahl){
+    //Plaziert eine beliebige Anzahl an Stein in einer random Ort, wo noch kein Hindernisse sind + keine Items im selben Position X
+    void platziereStein(int anzahl){
             
      for (int i = 0; i < anzahl; i++) {
             
             int positionX = rand() % 30;
 
-            while (levelMap[positionX][1] != 0 || levelMap[positionX][0] > 1 || levelMap[positionX][2] > 1  ) {
+            while (karte[positionX][1] != 0 || karte[positionX][0] > 1 || karte[positionX][2] > 1  ) {
 
                 positionX = rand() % 30;
                 
             }
 
-            levelMap[positionX][1] = 4;
+            karte[positionX][1] = 4;
         } 
         
   }
     
     
     
-    void buildLevel(int muenze, int feinde, int marioBlock){
+    //Füllt die ganze Karte mit alle items und Hindernisse + macht alle Elemente in die Queues rein
+    void buildLevel(int muenze, int feinde, int stein){
         
         fuellMap();
         platziereFeind(feinde);
         platziereMuenze(muenze);
-        platziereMarioBlock(marioBlock);
+        platziereStein(stein);
         toQueue();
     }
         
@@ -230,7 +232,7 @@ public:
         if( x >= 10 && x <= 190 && find(bloeckeNah.begin(), bloeckeNah.end(), block) == bloeckeNah.end() ){
                 
                 bloeckeNah.push_back(block);
-                cout <<"push: " << bloeckeNah.size() << endl ;
+                //cout <<"push: " << bloeckeNah.size() << endl ;
                 
         }
             
@@ -239,7 +241,7 @@ public:
             if(find(bloeckeNah.begin(), bloeckeNah.end(), block) != bloeckeNah.end()){
 
                 bloeckeNah.remove(block);
-                cout <<"erase: " << bloeckeNah.size()<< endl ;
+                //cout <<"erase: " << bloeckeNah.size()<< endl ;
             }
         }
     }
@@ -318,6 +320,8 @@ public:
     } 
     
     
+    
+    //Spieler kann über die Hindernisse laufen
     int woIstBoden (int spielerY ){
         
         int groessteY = 490;
@@ -337,20 +341,23 @@ public:
         
     }
     
+    //gibt erste Wert von ebene1 zurück
     int getEbene1() {
         return ebene1.dequeue();
     }
     
+    //gibt erste Wert von ebene2 zurück
     int getEbene2() {
         return ebene2.dequeue();
     }
     
+    //gibt erste Wert von ebene3 zurück
     int getEbene3() {
         return ebene3.dequeue();
     }
                
 
-    //füngt ein Hindernis zu
+    //fügt ein Hindernis zu
     void add(int h){
 
         int r = rand() % 255;
@@ -367,11 +374,7 @@ public:
         
         }
 
-    //schaut was auf die Karte ist
-    /*int getValue(int x, int y){
-        
-        return levelMap[x][y];
-    }*/
+   
 };
 
 #endif
