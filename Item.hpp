@@ -39,17 +39,18 @@ class Item {
             this->breite = breite;
             this->art = art;
             
+            //für drei verschiede Items gibt es jeweils andere Bilder
             if (art == 0) {
                 //stein
-                bild = Image("../img/Tardis.png", xpos, ypos, hoehe, breite, spielfeld);
-                bildKollision = Image("../img/bowser.jpeg", xpos, ypos, hoehe, breite, spielfeld);
+                bild = Image("bilder/Stein%20normal.png", xpos, ypos, hoehe, breite, spielfeld);
+                bildKollision = Image("bilder/stein%20grau.png", xpos, ypos, hoehe, breite, spielfeld);
                 bildKollision.hide();
-                bildZerstoert = Image("../img/dalek.jpg", xpos, ypos, hoehe, breite, spielfeld);
+                bildZerstoert = Image("bilder/stein%20bunt.png", xpos, ypos, hoehe, breite, spielfeld);
                 bildZerstoert.hide();
 
             } else if (art == 1) {
                 //münze
-                bild = Image("../img/Kreise.png", xpos, ypos, hoehe, breite, spielfeld);
+                bild = Image("bilder/Münze.png", xpos, ypos, hoehe, breite, spielfeld);
                 
             } else if (art == 2) {
                 //feind
@@ -122,16 +123,17 @@ class Item {
             for(int size = 30; size > 5; size-- ) {
                 bild.setSize(size,size);
             }
-            //bild.removeFromView();
         }
 
         //Marioblock
+        //anderes Bild erscheint
         void steinZerstoert() {
             bild.hide();
             bildZerstoert.show();
             bildZerstoert.moveTo(xpos,ypos);
         }
     
+        //anderes Bild erscheint
         void steinKollidiert() {
             bild.hide();
             bildKollision.show();
@@ -139,6 +141,7 @@ class Item {
         }
     
         //Feind
+        //wird kleiner und verschwindet
         void feindTot() {
             for (int zaehler = 0; zaehler < 50; zaehler++) {
                 bild.setSize (breite + zaehler, hoehe - zaehler);
@@ -150,6 +153,7 @@ class Item {
         void löschen() {
             bild.removeFromView();
         }
+    
         //nur für Stein
         void löscheStein() {
             bild.removeFromView();
